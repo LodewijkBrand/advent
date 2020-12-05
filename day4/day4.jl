@@ -40,8 +40,9 @@ function count_valid_strict(passport_list)
             check = Bool[]
             for field in fields
                 if contains(field, "byr:")
+                    println(field)
                     byr = parse(Int, split(field, ":")[2])
-                    push!(check, byr ∈ 1920:2002)
+                    println(byr ∈ 1920:2002)
                 end
                 if contains(field, "iyr:")
                     iyr = parse(Int, split(field, ":")[2])
@@ -53,20 +54,30 @@ function count_valid_strict(passport_list)
                 end
                 if contains(field, "hgt:")
                     hgt = split(field, ":")[2]
-                    split(field, ":")
+                    if occursin(r"[0-9]*cm|[0-9]*in", hgt)
+                        if hgt[end-1:end] == "cm"
+                            push!(check, 150 <= parse(Int, hgt[1:end-2]) <= 193)
+                        elseif hgt[end-1:end] == "in"
+                            push!(check, 59 <= parse(Int, hgt[1:end-2]) <= 76)
+                        else
+                            push!(check, false)
+                        end
+                    else
+                        push!(check, false)
+                    end
                 end
                 if contains(field, "hcl:")
-                    hcl = split(field, ":")[2]
-                    split(field, ":")
+                    hcl = occursin(r"#[0-9a-f]{6}", split(field, ":")[2])
+                    push!(check, hcl)
                 end
                 if contains(field, "ecl:")
                     ecl = split(field, ":")[2]
-                    split(field, ":")
+                    check_ecl = (ecl == "amb") | (ecl == "blu") | (ecl == "brn") | (ecl == "gry") | (ecl == "grn") | (ecl == "hzl") | (ecl == "oth")
+                    push!(check, check_ecl)
                 end
                 if contains(field, "pid:")
-                    println(field)
-                    pid = parse(Int, split(field, ":")[2])
-                    split(field, ":")
+                    pid = occursin(r"[0-9]{9}", split(field, ":")[2])
+                    push!(check, pid)
                 end
             end
             if all(check)
@@ -77,4 +88,4 @@ function count_valid_strict(passport_list)
     return valid
 end
 
-count_valid_strict(passport_list)
+println("Strict: " * string(count_valid_strict(passport_list)))
