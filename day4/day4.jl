@@ -40,9 +40,8 @@ function count_valid_strict(passport_list)
             check = Bool[]
             for field in fields
                 if contains(field, "byr:")
-                    println(field)
                     byr = parse(Int, split(field, ":")[2])
-                    println(byr ∈ 1920:2002)
+                    push!(check, byr ∈ 1920:2002)
                 end
                 if contains(field, "iyr:")
                     iyr = parse(Int, split(field, ":")[2])
@@ -67,7 +66,9 @@ function count_valid_strict(passport_list)
                     end
                 end
                 if contains(field, "hcl:")
-                    hcl = occursin(r"#[0-9a-f]{6}", split(field, ":")[2])
+                    println(field)
+                    hcl = occursin(r"^#[0-9a-f]{6}$", split(field, ":")[2])
+                    println(hcl)
                     push!(check, hcl)
                 end
                 if contains(field, "ecl:")
@@ -76,7 +77,7 @@ function count_valid_strict(passport_list)
                     push!(check, check_ecl)
                 end
                 if contains(field, "pid:")
-                    pid = occursin(r"[0-9]{9}", split(field, ":")[2])
+                    pid = occursin(r"^[0-9]{9}$", split(field, ":")[2])
                     push!(check, pid)
                 end
             end
