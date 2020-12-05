@@ -40,23 +40,6 @@ function seat_id(row, col)
     return row * 8 + col
 end
 
-function get_max_id(boarding_passes)
-    max_id = 0
-    rows = collect(0:127)
-    columns = collect(0:7)
-
-    for pass in boarding_passes
-        row = get_row(rows, pass[1:7])
-        col = get_col(columns, pass[8:end])
-        sid = seat_id(row, col)
-        if sid > max_id
-            max_id = sid
-        end
-    end
-
-    return max_id
-end
-
 function get_all_id(boarding_passes)
     ids = Int[]
     rows = collect(0:127)
@@ -72,11 +55,6 @@ function get_all_id(boarding_passes)
     return ids
 end
 
-max_id = get_max_id(boarding_passes)
-println("Max ID: " * string(max_id))
-all_ids = get_all_id(boarding_passes)
-sort!(all_ids)
-
 function find_my_seat(sorted_ids)
     checker = collect(sorted_ids[1]:sorted_ids[end])
     for i in 1:length(sorted_ids)
@@ -86,4 +64,7 @@ function find_my_seat(sorted_ids)
     end
 end
 
+all_ids = get_all_id(boarding_passes)
+sort!(all_ids)
+println("Max ID: " * string(all_ids[end]))
 println("My seat: " * string(find_my_seat(all_ids)))
